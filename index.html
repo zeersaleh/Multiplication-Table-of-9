@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Quiz (x9)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles (identical to the previous games) */
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+            text-shadow: 2px 2px #333;
+        }
+        .game-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            border: 4px solid #fff;
+            max-width: 90%;
+            width: 500px;
+        }
+        button {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #ff6347; /* Tomato */
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px #d9534f;
+            text-shadow: 1px 1px #333;
+            min-width: 100px;
+        }
+        button:hover {
+            background-color: #ff482b;
+            transform: translateY(-2px);
+            box-shadow: 0 7px #d9534f;
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #d9534f;
+        }
+        #start-button, #restart-button {
+             background-color: #4CAF50; /* Green */
+             box-shadow: 0 5px #45a049;
+        }
+        #start-button:hover, #restart-button:hover {
+            background-color: #45a049;
+            box-shadow: 0 7px #45a049;
+        }
+         #start-button:active, #restart-button:active {
+            box-shadow: 0 2px #45a049;
+        }
+        .answer-options button {
+            background-color: #1e90ff; /* Dodger Blue */
+            box-shadow: 0 5px #1c86ee;
+        }
+        .answer-options button:hover {
+            background-color: #1c86ee;
+            box-shadow: 0 7px #1c86ee;
+        }
+        .answer-options button:active {
+            box-shadow: 0 2px #1c86ee;
+        }
+        #feedback {
+            font-size: 2rem;
+            height: 40px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        #celebration-canvas {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            margin-top: 20px;
+            width: 100%;
+            height: 300px;
+            border: 2px solid #fff;
+        }
+        .insta-link {
+            margin-top: 25px;
+            font-size: 0.8rem;
+        }
+        .insta-link a {
+            color: #ffeb3b; /* Yellow link */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .insta-link a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="text-3xl font-bold mb-6">Times Table Quiz (x9)</h1>
+
+        <div id="start-screen">
+            <p class="mb-4">Press Start to begin!</p>
+            <button id="start-button">Start Game</button>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <div class="stats">
+                <div id="score">Score: 0</div>
+                <div id="timer">Time: 0s</div>
+            </div>
+            <h2 id="question" class="text-2xl mb-4">9 x ? = ?</h2>
+            <div id="feedback"></div> <div id="answer-options" class="flex flex-wrap justify-center">
+                </div>
+        </div>
+
+        <div id="end-screen" class="hidden">
+            <h2 id="end-message" class="text-2xl mb-4">Congratulations!</h2>
+            <p id="final-time" class="mb-4">Your time: 0s</p>
+            <canvas id="celebration-canvas"></canvas>
+            <button id="restart-button" class="mt-4">Play Again?</button>
+        </div>
+
+        <div class="insta-link">
+            <p>Follow on Instagram:
+                <a href="https://www.instagram.com/saleh__zeer/" target="_blank" rel="noopener noreferrer">@saleh__zeer</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements (identical structure)
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const startButton = document.getElementById('start-button');
+        const restartButton = document.getElementById('restart-button');
+        const questionElement = document.getElementById('question');
+        const answerOptionsElement = document.getElementById('answer-options');
+        const feedbackElement = document.getElementById('feedback');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const endMessageElement = document.getElementById('end-message');
+        const finalTimeElement = document.getElementById('final-time');
+        const celebrationCanvas = document.getElementById('celebration-canvas');
+        const ctx = celebrationCanvas.getContext('2d');
+
+        // Game State (identical structure)
+        let score = 0;
+        let questionNumber = 0;
+        const maxQuestions = 10; // Target score
+        let currentCorrectAnswer;
+        let timerInterval;
+        let startTime;
+        let gameActive = false;
+        let availableMultipliers = [];
+
+        // Sound Synthesis (Tone.js) - (identical setup)
+        let synth;
+        let correctSound, wrongSound;
+
+        function setupSounds() {
+            // Initialize Tone.js synth if it hasn't been already
+            if (!synth) {
+                 synth = new Tone.Synth().toDestination();
+                 // Define sounds for correct and incorrect answers
+                 correctSound = () => {
+                     synth.triggerAttackRelease("C5", "8n", Tone.now()); // Higher pitch for correct
+                 };
+                 wrongSound = () => {
+                     synth.triggerAttackRelease("C3", "8n", Tone.now()); // Lower pitch for wrong
+                 };
+            }
+        }
+
+        // --- Celebration Animation --- (identical implementation)
+        let animationFrameId;
+        let particles = [];
+        const particleTypes = ['🎈', '🗿', '✨', '🎉', '🌟']; // Emojis for particles
+
+        function createParticle() {
+            // Ensure canvas has valid dimensions before creating particles
+            if (celebrationCanvas.width <= 0 || celebrationCanvas.height <= 0) return;
+            const x = Math.random() * celebrationCanvas.width;
+            const y = celebrationCanvas.height + 20; // Start below canvas
+            const size = Math.random() * 15 + 15; // Size between 15 and 30
+            const speedY = Math.random() * 2 + 1; // Speed between 1 and 3
+            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+            particles.push({ x, y, size, speedY, type });
+        }
+
+        function animateCelebration() {
+             // Ensure canvas dimensions are set before drawing
+             if (celebrationCanvas.width !== celebrationCanvas.offsetWidth || celebrationCanvas.height !== celebrationCanvas.offsetHeight) {
+                celebrationCanvas.width = celebrationCanvas.offsetWidth;
+                celebrationCanvas.height = celebrationCanvas.offsetHeight;
+             }
+             // Prevent drawing if canvas is not visible or has no size
+             if (celebrationCanvas.width <= 0 || celebrationCanvas.height <= 0) {
+                 // Continue trying to animate if the game is in the ended state
+                 if (gameActive === false && score === maxQuestions) {
+                    animationFrameId = requestAnimationFrame(animateCelebration);
+                 }
+                 return;
+             }
+
+            // Clear the canvas for the next frame
+            ctx.clearRect(0, 0, celebrationCanvas.width, celebrationCanvas.height);
+
+            // Add new particles occasionally
+            if (Math.random() < 0.1) { // Controls the rate of new particles
+                createParticle();
+            }
+
+            // Update and draw existing particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.y -= p.speedY; // Move particle upwards
+
+                // Draw the particle (emoji)
+                ctx.font = `${p.size}px Arial`; // Use Arial for broad emoji support
+                ctx.textAlign = 'center';
+                ctx.fillText(p.type, p.x, p.y);
+
+                // Remove particle if it moves off the top of the screen
+                if (p.y < -p.size) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // Request the next frame if the animation should continue
+            if (gameActive === false && score === maxQuestions) {
+                 animationFrameId = requestAnimationFrame(animateCelebration);
+            }
+        }
+
+         function stopCelebrationAnimation() {
+             // Cancel any pending animation frame
+             if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null; // Reset the ID
+             }
+             // Clear the particles array
+             particles = [];
+             // Clear the canvas if context exists and canvas has dimensions
+             if (ctx && celebrationCanvas.width > 0 && celebrationCanvas.height > 0) {
+                 ctx.clearRect(0, 0, celebrationCanvas.width, celebrationCanvas.height);
+             }
+        }
+
+
+        // --- Game Logic ---
+
+        function shuffleArray(array) {
+            // Fisher-Yates (Knuth) shuffle algorithm
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+        function generateQuestion() {
+            // Check if we have run out of multipliers (shouldn't happen with current setup)
+            if (availableMultipliers.length === 0) {
+                 endGame(true); // End the game successfully if out of questions
+                 return;
+            }
+
+            // Select a random multiplier from the available list
+            const randomIndex = Math.floor(Math.random() * availableMultipliers.length);
+            const multiplier = availableMultipliers.splice(randomIndex, 1)[0]; // Get and remove multiplier
+
+            // *** The main change: Use 9 instead of 8 ***
+            currentCorrectAnswer = 9 * multiplier;
+            questionElement.textContent = `9 x ${multiplier} = ?`;
+            // *** End of main change ***
+
+            // Generate answer options: one correct, three incorrect
+            const options = [currentCorrectAnswer];
+            while (options.length < 4) {
+                // Generate a wrong answer near the correct one, ensuring it's positive
+                let wrongAnswerOffset = Math.floor(Math.random() * 11) - 5; // +/- 5 offset
+                if (wrongAnswerOffset === 0) wrongAnswerOffset = (Math.random() < 0.5 ? 1 : -1); // Ensure offset is not zero
+                let wrongAnswer = Math.max(1, currentCorrectAnswer + wrongAnswerOffset); // Apply offset, minimum value is 1
+
+                // Add the wrong answer if it's not already in the options and not the correct answer
+                if (!options.includes(wrongAnswer) && wrongAnswer !== currentCorrectAnswer) {
+                    options.push(wrongAnswer);
+                }
+            }
+
+            shuffleArray(options); // Randomize the order of answer options
+
+            // Display options as buttons
+            answerOptionsElement.innerHTML = ''; // Clear previous buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                // Assign the checkAnswer function to the button's click event
+                button.onclick = () => checkAnswer(option);
+                answerOptionsElement.appendChild(button);
+            });
+
+            // Clear previous feedback message
+            feedbackElement.textContent = '';
+        }
+
+        function checkAnswer(selectedAnswer) {
+            // Ignore clicks if the game is not currently active
+            if (!gameActive) return;
+
+            // Check if the selected answer is correct
+            if (selectedAnswer === currentCorrectAnswer) {
+                score++; // Increment score
+                scoreElement.textContent = `Score: ${score}`; // Update score display
+                feedbackElement.textContent = '✅ Correct!'; // Show positive feedback
+                if (correctSound) correctSound(); // Play correct sound
+
+                // Check if the player has reached the target score
+                if (score >= maxQuestions) {
+                    endGame(true); // End the game with a win
+                } else {
+                    // Proceed to the next question after a short delay
+                    setTimeout(generateQuestion, 800); // 800ms delay
+                }
+            } else {
+                // Handle incorrect answer
+                feedbackElement.textContent = `❌ Wrong!`; // Show negative feedback
+                 if (wrongSound) wrongSound(); // Play wrong sound
+                 // Proceed to the next question after a short delay
+                 setTimeout(generateQuestion, 800); // 800ms delay
+            }
+        }
+
+        function updateTimer() {
+            // Calculate elapsed time in seconds
+            const now = Date.now();
+            const elapsedTime = Math.floor((now - startTime) / 1000);
+            // Update the timer display
+            timerElement.textContent = `Time: ${elapsedTime}s`;
+        }
+
+        function startGame() {
+            // Start Tone.js audio context on user interaction (button click)
+            Tone.start().then(setupSounds);
+
+            // Initialize game state
+            gameActive = true;
+            score = 0;
+            questionNumber = 0;
+            // Create list of multipliers (1-12), shuffle, and take the first 'maxQuestions'
+            availableMultipliers = Array.from({length: 12}, (_, i) => i + 1);
+            shuffleArray(availableMultipliers);
+            availableMultipliers = availableMultipliers.slice(0, maxQuestions);
+
+            // Update UI elements
+            scoreElement.textContent = `Score: ${score}`;
+            feedbackElement.textContent = '';
+            startScreen.classList.add('hidden'); // Hide start screen
+            endScreen.classList.add('hidden');   // Hide end screen
+            gameScreen.classList.remove('hidden'); // Show game screen
+            celebrationCanvas.style.display = 'none'; // Ensure canvas is hidden
+            stopCelebrationAnimation(); // Stop any previous celebration
+
+            // Start timer
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000); // Update timer every second
+            updateTimer(); // Show initial time (0s)
+
+            // Generate the first question
+            generateQuestion();
+        }
+
+        function endGame(isWin) {
+            // Stop game activity and timer
+            gameActive = false;
+            clearInterval(timerInterval);
+
+            // Switch UI screens
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+
+            // Handle win condition
+            if (isWin) {
+                const endTime = Date.now();
+                const totalTime = Math.floor((endTime - startTime) / 1000); // Calculate total time
+                endMessageElement.textContent = "🎉 You did it! 🎉"; // Set win message
+                finalTimeElement.textContent = `Your time: ${totalTime}s`; // Display final time
+                celebrationCanvas.style.display = 'block'; // Show celebration canvas
+                particles = []; // Reset particles for new animation
+                 // Start animation after a short delay to ensure canvas is ready
+                requestAnimationFrame(() => {
+                    animateCelebration();
+                });
+            } else {
+                // Handle loss condition (currently not reachable in this setup)
+                endMessageElement.textContent = "Game Over";
+                finalTimeElement.textContent = "";
+                celebrationCanvas.style.display = 'none';
+            }
+        }
+
+        // Event Listeners for buttons
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame); // Restart button also calls startGame
+
+        // Resize handler for celebration canvas (optional but good practice)
+        window.addEventListener('resize', () => {
+            // If the celebration canvas is visible when resizing
+            if (celebrationCanvas.style.display === 'block') {
+                 stopCelebrationAnimation(); // Stop the current animation
+                 // Update canvas dimensions to fit new size
+                 celebrationCanvas.width = celebrationCanvas.offsetWidth;
+                 celebrationCanvas.height = celebrationCanvas.offsetHeight;
+                 // Restart animation if the game is still in the ended state
+                 if (!gameActive && score === maxQuestions) {
+                     particles = []; // Reset particles
+                     animateCelebration(); // Start animation with new dimensions
+                 }
+            }
+        });
+
+    </script>
+</body>
+</html>
