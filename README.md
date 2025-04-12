@@ -1,5 +1,4 @@
 # Multiplication-Table-of-9
-# Multiplication-Table-of-14
 ![Game Screenshot](game-image.png "Screenshot from the game")
 ## Enhancing Learning Through Engaging Tools
 
@@ -20,18 +19,18 @@ Consider Times Table quizzes as a practical application. They provide an excelle
 
 💡 **Times Table Quiz Games (x3 - x14):** Make studying engaging and effective. Check them out!
 
-* 🎰 [Multiplication Table of 3](https://lnkd.in/d5WFitgn)
-* 🎰 [Multiplication Table of 4](https://lnkd.in/dGmJpWfx)
-* 🎰 [Multiplication Table of 5](https://lnkd.in/dbiGqy2Z)
-* 🎰 [Multiplication Table of 6](https://lnkd.in/dMY4kBAz)
-* 🎰 [Multiplication Table of 7](https://lnkd.in/dg_SNCB4)
-* 🎰 [Multiplication Table of 8](https://lnkd.in/dDSuAra2)
-* 🎰 [Multiplication Table of 9](https://lnkd.in/djfHsGsT)
-* 🎰 [Multiplication Table of 10](https://lnkd.in/dDYWzHRg)
-* 🎰 [Multiplication Table of 11](https://lnkd.in/dVfyg8ZF)
-* 🎰 [Multiplication Table of 12](https://lnkd.in/dWaCUv8i)
-* 🎰 [Multiplication Table of 13](https://lnkd.in/d8vgutPb)
-* 🎰 [Multiplication Table of 14](https://lnkd.in/dFqYrfC6)
+* 👾 👾 👾 [Multiplication-Table-of-3](https://zeersaleh.github.io/Multiplication-Table-of-3/)
+* 👾 👾 👾 [Multiplication-Table-of-4](https://zeersaleh.github.io/Multiplication-Table-of-4/)
+* 👾 👾 👾 [Multiplication-Table-of-5](https://zeersaleh.github.io/Multiplication-Table-of-5/)
+* 👾 👾 👾 [Multiplication-Table-of-6](https://zeersaleh.github.io/Multiplication-Table-of-6/)
+* 👾 👾 👾 [Multiplication-Table-of-7](https://zeersaleh.github.io/Multiplication-Table-of-7/)
+* 👾 👾 👾 [Multiplication-Table-of-8](https://zeersaleh.github.io/Multiplication-Table-of-8/)
+* 👾 👾 👾 [Multiplication-Table-of-9](https://zeersaleh.github.io/Multiplication-Table-of-9/)
+* 👾 👾 👾 [Multiplication-Table-of-10](https://zeersaleh.github.io/Multiplication-Table-of-10/)
+* 👾 👾 👾 [Multiplication-Table-of-11](https://zeersaleh.github.io/Multiplication-Table-of-11/)
+* 👾 👾 👾 [Multiplication-Table-of-12](https://zeersaleh.github.io/Multiplication-Table-of-12/)
+* 👾 👾 👾 [Multiplication-Table-of-13](https://zeersaleh.github.io/Multiplication-Table-of-13/)
+* 👾 👾 👾 [Multiplication-Table-of-14](https://zeersaleh.github.io/Multiplication-Table-of-14/)
 
 ---
 
